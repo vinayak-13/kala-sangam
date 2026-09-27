@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -10,29 +10,71 @@ import {
   Building2,
   Store,
   UserCircle2,
-  PhoneCall,
   Volume2,
-  Globe2,
+  Globe,
   User,
 } from 'lucide-react';
 import { RoleGatekeeperModal } from '@/components/RoleGatekeeperModal';
-import { playTanpuraChime, speakText } from '@/lib/audio-utils';
+import { WelcomeLanguageGateway } from '@/components/onboarding/WelcomeLanguageGateway';
+import { VoiceGuideButton } from '@/components/VoiceGuideButton';
+import { ALL_INDIC_LANGUAGES } from '@/lib/i18n/indic-languages';
 
 export function Navbar() {
   const [openGatekeeper, setOpenGatekeeper] = useState(false);
+  const [openLanguageModal, setOpenLanguageModal] = useState(false);
+  const [activeLocale, setActiveLocale] = useState('hi');
   const pathname = usePathname();
 
-  const handleVoiceHelp = () => {
-    playTanpuraChime(1.5);
-    speakText('कला-संगम में आपका स्वागत है। आप बोलकर सामान जोड़ सकते हैं या भारतीय हस्तशिल्प खरीद सकते हैं।', 'hi');
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('kala_preferred_language') || 'hi';
+      setActiveLocale(saved);
+
+      const handleLocaleChange = () => {
+        const updated = localStorage.getItem('kala_preferred_language') || 'hi';
+        setActiveLocale(updated);
+      };
+
+      window.addEventListener('storage', handleLocaleChange);
+      window.addEventListener('kala_language_changed', handleLocaleChange);
+
+      return () => {
+        window.removeEventListener('storage', handleLocaleChange);
+        window.removeEventListener('kala_language_changed', handleLocaleChange);
+      };
+    }
+  }, []);
+
+  const currentLangObj =
+    ALL_INDIC_LANGUAGES.find((l) => l.code === activeLocale) || ALL_INDIC_LANGUAGES[0];
+
+  const getPageKey = () => {
+    if (pathname?.startsWith('/studio/capture')) return 'capture';
+    if (pathname?.startsWith('/studio')) return 'studio';
+    if (pathname?.startsWith('/explore')) return 'explore';
+    if (pathname?.startsWith('/portal')) return 'portal';
+    return 'home';
   };
 
   return (
     <>
       <RoleGatekeeperModal forceOpen={openGatekeeper} onClose={() => setOpenGatekeeper(false)} />
 
-      {/* ── TOP HEADER (STITCH TAILORED) ─────────────────────────────────── */}
-      <header className="sticky top-0 z-50 bg-[#FFF8F6]/95 backdrop-blur-md border-b border-[#E6DCCF] shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+      {/* Language Switcher Modal */}
+      {openLanguageModal && (
+        <WelcomeLanguageGateway
+          isModal
+          initialLocale={activeLocale}
+          onClose={() => setOpenLanguageModal(false)}
+          onComplete={(newLocale) => {
+            setActiveLocale(newLocale);
+            setOpenLanguageModal(false);
+          }}
+        />
+      )}
+
+      {/* ── TOP HEADER ───────────────────────────────────────────────────── */}
+      <header className="sticky top-0 z-40 bg-[#FFF8F6]/95 backdrop-blur-md border-b border-[#E6DCCF] shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
           {/* Brand Logo & Bilingual Header */}
           <Link href="/" className="flex items-center gap-3 shrink-0 group">
@@ -49,13 +91,13 @@ export function Navbar() {
                 </span>
               </div>
               <span className="text-[11px] font-bold text-[#9D3E1B] tracking-wider uppercase">
-                Voice-First Artisan Market
+                Voice-First Artisan Studio
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden xl:flex items-center gap-2 font-bold text-sm">
+          <nav className="hidden lg:flex items-center gap-2 font-bold text-sm">
             <Link
               href="/explore"
               className={`px-4 py-2 rounded-xl transition flex items-center gap-2 ${
@@ -81,41 +123,49 @@ export function Navbar() {
             </Link>
 
             <Link
-              href="/explore"
-              className="px-4 py-2 rounded-xl text-[#56423C] hover:bg-[#FBEBE4] hover:text-[#221A16] transition flex items-center gap-2"
+              href="/studio"
+              className={`px-4 py-2 rounded-xl transition flex items-center gap-2 ${
+                pathname === '/studio'
+                  ? 'bg-[#F5E5DE] text-[#9D3E1B]'
+                  : 'text-[#56423C] hover:bg-[#FBEBE4] hover:text-[#221A16]'
+              }`}
             >
-              <Globe2 className="w-4 h-4 text-[#006B2F]" />
-              <span>धरोहर / Provenance</span>
+              <Sparkles className="w-4 h-4 text-[#006B2F]" />
+              <span>स्टूडियो / Studio</span>
             </Link>
           </nav>
 
           {/* Right Header Actions */}
-          <div className="flex items-center gap-2.5 shrink-0">
-            {/* Voice Help CTA */}
+          <div className="flex items-center gap-2 shrink-0">
+            {/* 1-Tap 22+ Languages Switcher Pill */}
             <button
               type="button"
-              onClick={handleVoiceHelp}
-              className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#FFF1EB] text-[#904D00] hover:bg-[#F5E5DE] font-bold text-xs transition border border-[#DDC0B8] min-h-[44px]"
-              title="Listen to voice assistant"
+              onClick={() => setOpenLanguageModal(true)}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-white hover:bg-[#FFF1EB] text-[#9D3E1B] border border-[#DDC0B8] font-bold text-xs shadow-xs transition active:scale-95"
+              title="भाषा बदलें / Change Language"
             >
-              <Volume2 className="w-4 h-4 text-[#FE932C]" />
-              <span>बोलकर मदद / Voice Help</span>
+              <Globe className="w-4 h-4 text-[#FE932C]" />
+              <span className="font-black">{currentLangObj.nativeName}</span>
+              <span className="text-[10px] text-[#56423C] hidden sm:inline">({currentLangObj.name})</span>
             </button>
+
+            {/* Universal Spoken Voice Guide Button */}
+            <VoiceGuideButton pageKey={getPageKey()} locale={activeLocale} />
 
             {/* Artisan Studio Direct CTA */}
             <Link
               href="/studio/capture"
-              className="flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full bg-[#9D3E1B] hover:bg-[#802906] text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition active:scale-95 min-h-[44px]"
+              className="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#9D3E1B] hover:bg-[#802906] text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition active:scale-95 min-h-[42px]"
             >
               <Mic className="w-4 h-4 animate-pulse text-amber-200" />
-              <span className="whitespace-nowrap">कारीगर स्टूडियो / Studio</span>
+              <span className="whitespace-nowrap">बोलकर बेचें (Capture)</span>
             </Link>
 
             {/* Role Switcher Modal Button */}
             <button
               type="button"
               onClick={() => setOpenGatekeeper(true)}
-              className="p-2.5 rounded-xl border border-[#DDC0B8] bg-white hover:bg-[#FFF1EB] text-[#56423C] hover:text-[#9D3E1B] transition shadow-xs"
+              className="p-2.5 rounded-2xl border border-[#DDC0B8] bg-white hover:bg-[#FFF1EB] text-[#56423C] hover:text-[#9D3E1B] transition shadow-xs"
               title="भूमिका बदलें (Switch Role)"
             >
               <UserCircle2 className="w-5 h-5 text-[#9D3E1B]" />
@@ -124,7 +174,7 @@ export function Navbar() {
             {/* Cart Link */}
             <Link
               href="/cart"
-              className="p-2.5 rounded-xl border border-[#DDC0B8] bg-white hover:bg-[#FFF1EB] text-[#221A16] transition relative shadow-xs"
+              className="p-2.5 rounded-2xl border border-[#DDC0B8] bg-white hover:bg-[#FFF1EB] text-[#221A16] transition relative shadow-xs"
               aria-label="Shopping Cart"
             >
               <ShoppingBag className="w-5 h-5" />
@@ -136,7 +186,7 @@ export function Navbar() {
         </div>
       </header>
 
-      {/* ── MOBILE BOTTOM NAVIGATION BAR (TACTILE & ERGONOMIC) ───────────── */}
+      {/* ── MOBILE BOTTOM NAVIGATION BAR ─────────────────────────────────── */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-[#FFF8F6]/95 backdrop-blur-xl border-t border-[#E6DCCF] px-2 py-1.5 pb-safe shadow-2xl">
         <div className="grid grid-cols-4 gap-1 text-center">
           <Link
@@ -185,3 +235,4 @@ export function Navbar() {
     </>
   );
 }
+

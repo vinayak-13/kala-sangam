@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Filter, Volume2, Sparkles, MapPin, Globe, ShieldCheck } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { ProductCard } from '@/components/ProductCard';
+import { VoiceGuideButton } from '@/components/VoiceGuideButton';
 import { CRAFT_CATALOG } from '@/lib/data/craft-catalog';
+import { ALL_INDIC_LANGUAGES } from '@/lib/i18n/indic-languages';
 import type { Product } from '@/lib/db/types';
 
 const CATALOG_AS_PRODUCTS: Product[] = CRAFT_CATALOG.map((c) => ({
@@ -34,6 +36,27 @@ export default function ExploreMarketplacePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCraft, setSelectedCraft] = useState('all');
   const [b2bOnly, setB2bOnly] = useState(false);
+  const [locale, setLocale] = useState('hi');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('kala_preferred_language') || 'hi';
+      setLocale(saved);
+
+      const handleLocaleChange = () => {
+        const updated = localStorage.getItem('kala_preferred_language') || 'hi';
+        setLocale(updated);
+      };
+
+      window.addEventListener('storage', handleLocaleChange);
+      window.addEventListener('kala_language_changed', handleLocaleChange);
+
+      return () => {
+        window.removeEventListener('storage', handleLocaleChange);
+        window.removeEventListener('kala_language_changed', handleLocaleChange);
+      };
+    }
+  }, []);
 
   const crafts = [
     'all',
@@ -59,24 +82,31 @@ export default function ExploreMarketplacePage() {
     return matchesSearch && matchesCraft && matchesB2b;
   });
 
+  const currentLangObj =
+    ALL_INDIC_LANGUAGES.find((l) => l.code === locale) || ALL_INDIC_LANGUAGES[0];
+
   return (
     <div className="min-h-screen bg-[#FFF8F6] text-[#221A16] flex flex-col selection:bg-[#9D3E1B]/20">
       <Navbar />
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Header & Filter Controls */}
+        {/* Header & Filter Controls (Dual-Language) */}
         <div className="space-y-4">
-          <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-black text-[#9D3E1B] uppercase tracking-wider mb-1">
-              <ShieldCheck className="w-4 h-4 text-[#006B2F]" />
-              <span>Authentic Cultural Provenance</span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div className="inline-flex items-center gap-1.5 text-xs font-black text-[#9D3E1B] uppercase tracking-wider mb-1">
+                <ShieldCheck className="w-4 h-4 text-[#006B2F]" />
+                <span>ODOP & GI प्रमाणित शिल्प धरोहर · Authentic Indian Craft Provenance</span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-black text-[#221A16] font-heading">
+                हस्तशिल्प बाज़ार (Artisan Marketplace)
+              </h1>
+              <p className="text-sm text-[#56423C] font-medium mt-1">
+                भारत भर के प्रमाणित कारीगरों द्वारा हस्तनिर्मित उत्कृष्ट कृतियाँ · Browse authentic Indic crafts with live voice provenance
+              </p>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-black text-[#221A16] font-heading">
-              हस्तशिल्प बाज़ार (Artisan Marketplace)
-            </h1>
-            <p className="text-sm text-[#56423C]">
-              Browse authentic Indic crafts with live voice provenance recorded by master artisans across 8 states
-            </p>
+
+            <VoiceGuideButton pageKey="explore" locale={locale} />
           </div>
 
           {/* Search Bar & B2B Filter */}
@@ -85,7 +115,7 @@ export default function ExploreMarketplacePage() {
               <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-[#56423C]" />
               <input
                 type="text"
-                placeholder="Search by craft, state, or material (e.g., Warli, Blue Pottery, Silver)..."
+                placeholder="कला, राज्य या सामग्री खोजें (e.g. Warli, Blue Pottery, Clay, Silk, Brass)..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-12 pr-4 py-3.5 bg-white rounded-2xl border border-[#E6DCCF] text-sm text-[#221A16] focus:outline-none focus:border-[#9D3E1B] shadow-xs font-medium"
@@ -101,7 +131,7 @@ export default function ExploreMarketplacePage() {
                   : 'bg-white text-[#56423C] border-[#E6DCCF] hover:bg-[#FFF1EB]'
               }`}
             >
-              <span>B2B Wholesale MOQ Only</span>
+              <span>B2B थोक (Wholesale MOQ Only)</span>
             </button>
           </div>
 
@@ -118,7 +148,7 @@ export default function ExploreMarketplacePage() {
                     : 'bg-white text-[#56423C] border border-[#E6DCCF] hover:bg-[#FFF1EB]'
                 }`}
               >
-                {craft === 'all' ? 'All Indian Crafts' : craft}
+                {craft === 'all' ? 'सभी भारतीय शिल्प / All Indian Crafts' : craft}
               </button>
             ))}
           </div>
@@ -134,3 +164,4 @@ export default function ExploreMarketplacePage() {
     </div>
   );
 }
+

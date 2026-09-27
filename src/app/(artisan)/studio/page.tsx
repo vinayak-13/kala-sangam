@@ -1,26 +1,53 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Mic, Package, TrendingUp, ShoppingBag, Plus, Sparkles, Volume2, ArrowRight, ShieldCheck } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { AIBadge } from '@/components/AIBadge';
+import { VoiceGuideButton } from '@/components/VoiceGuideButton';
+import { ALL_INDIC_LANGUAGES } from '@/lib/i18n/indic-languages';
 
 export default function ArtisanStudioDashboard() {
+  const [locale, setLocale] = useState('hi');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('kala_preferred_language') || 'hi';
+      setLocale(saved);
+
+      const handleLocaleChange = () => {
+        const updated = localStorage.getItem('kala_preferred_language') || 'hi';
+        setLocale(updated);
+      };
+
+      window.addEventListener('storage', handleLocaleChange);
+      window.addEventListener('kala_language_changed', handleLocaleChange);
+
+      return () => {
+        window.removeEventListener('storage', handleLocaleChange);
+        window.removeEventListener('kala_language_changed', handleLocaleChange);
+      };
+    }
+  }, []);
+
+  const currentLangObj =
+    ALL_INDIC_LANGUAGES.find((l) => l.code === locale) || ALL_INDIC_LANGUAGES[0];
+
   return (
     <div className="min-h-screen bg-[#FFF8F6] text-[#221A16] flex flex-col selection:bg-[#9D3E1B]/20">
       <Navbar />
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Artisan Header with Voice Capture CTA */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-[#E6DCCF] p-6 sm:p-8 rounded-3xl shadow-sm">
+        {/* Artisan Header with Voice Capture CTA (Dual-Language) */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border-2 border-[#E6DCCF] p-6 sm:p-8 rounded-3xl shadow-sm">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
               <span className="text-xs font-black px-3 py-0.5 rounded-full bg-[#F0FDF4] text-[#006B2F] border border-[#006B2F]/30 flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-[#006B2F] animate-pulse"></span>
-                सत्यापित शिल्पकार (Verified Weaver)
+                सत्यापित शिल्पकार (ODOP & GI Verified Artisan)
               </span>
-              <AIBadge label="Indic Voice Enabled" />
+              <AIBadge label="22+ Indic Voice AI" />
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-[#221A16] font-heading">
               नमस्ते, सुनील ढनगर (Sunil Dhangar)
@@ -30,18 +57,21 @@ export default function ArtisanStudioDashboard() {
             </p>
           </div>
 
-          <Link
-            href="/studio/capture"
-            className="artisan-action-btn px-7 py-4 rounded-2xl bg-[#9D3E1B] hover:bg-[#802906] text-white font-black text-base shadow-lg hover:shadow-xl flex items-center justify-center gap-2.5 transition active:scale-95 shrink-0"
-          >
-            <Mic className="w-5 h-5 text-amber-200 animate-pulse" />
-            <span>नया उत्पाद जोड़ें (Add Product by Voice)</span>
-          </Link>
+          <div className="flex items-center gap-3 shrink-0 flex-wrap">
+            <VoiceGuideButton pageKey="studio" locale={locale} />
+            <Link
+              href="/studio/capture"
+              className="artisan-action-btn px-7 py-4 rounded-2xl bg-[#9D3E1B] hover:bg-[#802906] text-white font-black text-base shadow-lg hover:shadow-xl flex items-center justify-center gap-2.5 transition active:scale-95 shrink-0"
+            >
+              <Mic className="w-5 h-5 text-amber-200 animate-pulse" />
+              <span>नया उत्पाद जोड़ें (Add Product by Voice)</span>
+            </Link>
+          </div>
         </div>
 
-        {/* 3 Metric Cards */}
+        {/* 3 Metric Cards (Dual-Language) */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div className="bg-white border border-[#E6DCCF] p-6 rounded-3xl shadow-xs space-y-2">
+          <div className="bg-white border-2 border-[#E6DCCF] p-6 rounded-3xl shadow-xs space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-[#56423C] uppercase tracking-wider">कुल कमाई (Total Earnings)</span>
               <TrendingUp className="w-5 h-5 text-[#006B2F]" />
@@ -52,7 +82,7 @@ export default function ArtisanStudioDashboard() {
 
           <Link
             href="/studio/orders"
-            className="bg-white border border-[#E6DCCF] hover:border-[#9D3E1B] p-6 rounded-3xl shadow-xs space-y-2 transition group"
+            className="bg-white border-2 border-[#E6DCCF] hover:border-[#9D3E1B] p-6 rounded-3xl shadow-xs space-y-2 transition group"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-[#56423C] uppercase tracking-wider">सक्रिय ऑर्डर्स (Active Orders)</span>
@@ -69,7 +99,7 @@ export default function ArtisanStudioDashboard() {
             </span>
           </Link>
 
-          <div className="bg-white border border-[#E6DCCF] p-6 rounded-3xl shadow-xs space-y-2">
+          <div className="bg-white border-2 border-[#E6DCCF] p-6 rounded-3xl shadow-xs space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-[#56423C] uppercase tracking-wider">प्रकाशित उत्पाद (Listed Crafts)</span>
               <Package className="w-5 h-5 text-[#904D00]" />
@@ -84,11 +114,11 @@ export default function ArtisanStudioDashboard() {
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-black text-[#221A16]">आपके उत्पाद (Your Listed Products)</h2>
             <Link href="/studio/capture" className="text-xs font-bold text-[#9D3E1B] hover:underline flex items-center gap-1">
-              <Plus className="w-4 h-4" /> नया रिकॉर्ड करें
+              <Plus className="w-4 h-4" /> नया रिकॉर्ड करें (Record New)
             </Link>
           </div>
 
-          <div className="bg-white border border-[#E6DCCF] rounded-3xl overflow-hidden shadow-xs divide-y divide-[#E6DCCF]">
+          <div className="bg-white border-2 border-[#E6DCCF] rounded-3xl overflow-hidden shadow-xs divide-y divide-[#E6DCCF]">
             {[
               {
                 id: 'e1111111-0000-0000-0000-000000000001',
@@ -141,7 +171,7 @@ export default function ArtisanStudioDashboard() {
                     href={`/product/${item.id}`}
                     className="px-4 py-2 rounded-xl bg-[#FFF1EB] text-[#9D3E1B] hover:bg-[#9D3E1B] hover:text-white font-bold text-xs transition shadow-xs"
                   >
-                    View Live
+                    लाइव देखें (View Live)
                   </Link>
                 </div>
               </div>
@@ -152,3 +182,4 @@ export default function ArtisanStudioDashboard() {
     </div>
   );
 }
+
