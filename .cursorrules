@@ -1,0 +1,21 @@
+# KALA-SANGAM Project Rules & Boundaries
+
+## Non-Negotiable Boundaries
+- Strict adherence to `/docs/DRD.md`.
+- All client/server types must come directly from database types or Zod schemas.
+- Route handlers must NOT exceed 25 lines. Repositories handle database calls.
+- Money is ALWAYS integer paise. Never float.
+- Never write mock/placeholder code unless explicitly marked as staged.
+
+## Architecture Layering
+- `src/app/api/**` — HTTP boundary only. Parse, authorize, call service, map errors (max 25 lines per handler).
+- `src/server/services/**` — Business logic. Pure-ish, testable, no Request/Response objects.
+- `src/server/repos/**` — The ONLY place that touches Supabase/SQL.
+- `src/server/ai/**` — Provider adapters behind interfaces.
+- `src/lib/` — Shared validation schemas (zod), constants, utils.
+
+## AI Pipeline Guardrails
+- A failed model call must NEVER delete or block the artisan's upload.
+- POST /api/products/:id/voice returns in < 400ms.
+- Every AI stage has timeouts and graceful fallbacks.
+- No AI keys in any `NEXT_PUBLIC_` environment variables.

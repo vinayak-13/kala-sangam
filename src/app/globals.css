@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+:root {
+  /* Stitch Design System - Earthy Artisan Tactile Palette */
+  --primary: #9D3E1B;
+  --primary-hover: #802906;
+  --primary-container: #BD5531;
+  --primary-fixed: #FFDBD0;
+  --primary-fixed-dim: #FFB59D;
+  --on-primary: #FFFFFF;
+  --on-primary-container: #FFFBFF;
+  --on-primary-fixed: #390C00;
+
+  --secondary: #904D00;
+  --secondary-container: #FE932C;
+  --secondary-fixed: #FFDCC3;
+  --secondary-fixed-dim: #FFB77D;
+  --on-secondary: #FFFFFF;
+  --on-secondary-container: #663500;
+  --on-secondary-fixed: #2F1500;
+
+  --tertiary: #006B2F;
+  --tertiary-hover: #005323;
+  --tertiary-container: #1E8642;
+  --tertiary-fixed: #95F8A7;
+  --tertiary-fixed-dim: #79DB8D;
+  --on-tertiary: #FFFFFF;
+  --on-tertiary-container: #F7FFF3;
+  --on-tertiary-fixed: #00210A;
+
+  --background: #FFF8F6;
+  --on-background: #221A16;
+  --surface: #FFF8F6;
+  --on-surface: #221A16;
+  --on-surface-variant: #56423C;
+
+  --surface-container-lowest: #FFFFFF;
+  --surface-container-low: #FFF1EB;
+  --surface-container: #FBEBE4;
+  --surface-container-high: #F5E5DE;
+  --surface-container-highest: #EFDFD8;
+  --surface-dim: #E6D7D0;
+  --surface-bright: #FFF8F6;
+
+  --outline: #8A726A;
+  --outline-variant: #DDC0B8;
+  --clay-border: #E6DCCF;
+
+  --radius: 16px;
+  --shadow-warm: 0 4px 14px rgba(36, 28, 24, 0.08);
+  --shadow-card: 0 2px 8px rgba(36, 28, 24, 0.06), 0 12px 28px rgba(36, 28, 24, 0.08);
+
+  /* iOS Safe-Area insets */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+@theme inline {
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-container: var(--primary-container);
+  --color-primary-fixed: var(--primary-fixed);
+  --color-primary-fixed-dim: var(--primary-fixed-dim);
+  --color-on-primary: var(--on-primary);
+  --color-on-primary-container: var(--on-primary-container);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-container: var(--secondary-container);
+  --color-secondary-fixed: var(--secondary-fixed);
+  --color-secondary-fixed-dim: var(--secondary-fixed-dim);
+  --color-on-secondary: var(--on-secondary);
+  --color-on-secondary-container: var(--on-secondary-container);
+
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-tertiary-fixed: var(--tertiary-fixed);
+  --color-on-tertiary: var(--on-tertiary);
+
+  --color-background: var(--background);
+  --color-on-background: var(--on-background);
+  --color-surface: var(--surface);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+
+  --color-surface-container-lowest: var(--surface-container-lowest);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+  --color-clay: var(--clay-border);
+
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+html, body {
+  background-color: var(--background);
+  color: var(--on-surface);
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Material Symbols alignment helper */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+/* Artisan surface high-contrast accessible sizing */
+.artisan-touch-target {
+  min-height: 48px;
+  min-width: 48px;
+}
+
+.artisan-action-btn {
+  min-height: 54px;
+  font-weight: 700;
+}
+
+/* AI Badge */
+.ai-badge {
+  background-color: #FEF3C7;
+  color: #92400E;
+  border: 1px solid #FCD34D;
+}
+
+/* Safe Area Inset Utility Classes for Mobile */
+.pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+.pt-safe {
+  padding-top: max(0.5rem, env(safe-area-inset-top));
+}
