@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Building2, FileText, ArrowRight, ShieldCheck, Award } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { VoiceGuideButton } from '@/components/VoiceGuideButton';
+import { TwoChannelMarketplace } from '@/components/b2b/TwoChannelMarketplace';
 import { productService } from '@/server/services/product-service';
 
 export default async function B2BPortalPage() {
@@ -13,6 +14,9 @@ export default async function B2BPortalPage() {
       <Navbar />
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Two-Channel B2B Marketplace Linkage (Heritage vs Bulk Cluster) */}
+        <TwoChannelMarketplace />
+
         {/* B2B Header (Dual-Language) */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#221A16] text-white p-6 sm:p-8 rounded-3xl shadow-sm border border-[#56423C]">
           <div>

@@ -13,6 +13,7 @@ import {
   Volume2,
   Globe,
   User,
+  Landmark,
 } from 'lucide-react';
 import { RoleGatekeeperModal } from '@/components/RoleGatekeeperModal';
 import { WelcomeLanguageGateway } from '@/components/onboarding/WelcomeLanguageGateway';
@@ -132,6 +133,18 @@ export function Navbar() {
             >
               <Sparkles className="w-4 h-4 text-[#006B2F]" />
               <span>स्टूडियो / Studio</span>
+            </Link>
+
+            <Link
+              href="/concierge"
+              className={`px-4 py-2 rounded-xl transition flex items-center gap-2 ${
+                pathname === '/concierge'
+                  ? 'bg-[#F5E5DE] text-[#9D3E1B]'
+                  : 'text-[#56423C] hover:bg-[#FBEBE4] hover:text-[#221A16]'
+              }`}
+            >
+              <Landmark className="w-4 h-4 text-[#FE932C]" />
+              <span>मेले व योजनाएं / Concierge</span>
             </Link>
           </nav>
 

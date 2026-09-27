@@ -21,9 +21,12 @@ import {
 } from 'lucide-react';
 import { speakText, playTanpuraChime, stopAllAudio, playUiBeep } from '@/lib/audio-utils';
 import { ALL_INDIC_LANGUAGES, getOnboardingI18n } from '@/lib/i18n/indic-languages';
+import { SmartOcrOnboarding, ExtractedArtisanData } from '@/components/onboarding/SmartOcrOnboarding';
+import { Scan } from 'lucide-react';
 
 export default function ArtisanOnboardingPage() {
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
+  const [showOcrScanner, setShowOcrScanner] = useState(false);
   const [isPlayingVoice, setIsPlayingVoice] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
@@ -105,6 +108,20 @@ export default function ArtisanOnboardingPage() {
     setTimeout(() => {
       router.push(`/studio/${formData.handle || 'sunil-warli-palghar'}`);
     }, 900);
+  };
+
+  const handleOcrExtracted = (ocrData: ExtractedArtisanData) => {
+    setFormData((prev) => ({
+      ...prev,
+      fullName: ocrData.fullName,
+      handle: ocrData.fullName.toLowerCase().replace(/[^a-z0-9]/g, '_').slice(0, 20) || 'artisan',
+      craftType: ocrData.craftType,
+      district: ocrData.district,
+      state: ocrData.state,
+      avatarUrl: ocrData.avatarUrl || prev.avatarUrl,
+    }));
+    setShowOcrScanner(false);
+    setCurrentStep(3);
   };
 
   const currentLangObj =
@@ -190,6 +207,39 @@ export default function ArtisanOnboardingPage() {
       {/* ── QUESTION 1: NAME, HANDLE & AVATAR ───────────────────────────── */}
       {currentStep === 1 && (
         <main className="my-auto space-y-5 py-2">
+          {/* Quick Smart OCR Toggle Banner */}
+          <div className="bg-[#FFF1EB] border-2 border-[#FE932C]/40 rounded-2xl p-3.5 flex items-center justify-between gap-3 shadow-xs">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-[#9D3E1B] text-white flex items-center justify-center shrink-0">
+                <Scan className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="text-xs font-black text-[#9D3E1B] block">
+                  ⚡ पहचान कार्ड OCR स्कैनर (Pehchan ID Auto-Scan)
+                </span>
+                <span className="text-[11px] text-[#56423C] font-semibold">
+                  फोटो खींचकर 1-सेकंड में प्रोफ़ाइल बनाएं
+                </span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowOcrScanner(!showOcrScanner)}
+              className="px-3.5 py-1.5 rounded-xl bg-[#9D3E1B] text-white font-bold text-xs hover:bg-[#802906] transition shrink-0 active:scale-95"
+            >
+              {showOcrScanner ? 'बंद करें (Close)' : 'स्कैन करें (Scan)'}
+            </button>
+          </div>
+
+          {/* Render Smart OCR Scanner if opened */}
+          {showOcrScanner && (
+            <SmartOcrOnboarding
+              locale={formData.preferredLocale}
+              onDataExtracted={handleOcrExtracted}
+            />
+          )}
+
           <div className="flex items-center justify-between gap-2">
             <div>
               <span className="text-xs font-bold text-[#C05A34] uppercase tracking-wider">

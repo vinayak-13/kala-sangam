@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Mic, Package, TrendingUp, ShoppingBag, Plus, Sparkles, Volume2, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Mic, Package, TrendingUp, ShoppingBag, Plus, Sparkles, Volume2, ArrowRight, ShieldCheck, Landmark, Building2 } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { AIBadge } from '@/components/AIBadge';
 import { VoiceGuideButton } from '@/components/VoiceGuideButton';
+import { VirtualBusinessManager } from '@/components/artisan/VirtualBusinessManager';
+import { OfflineSyncBadge } from '@/components/OfflineSyncBadge';
 import { ALL_INDIC_LANGUAGES } from '@/lib/i18n/indic-languages';
 
 export default function ArtisanStudioDashboard() {
@@ -109,6 +111,64 @@ export default function ArtisanStudioDashboard() {
           </div>
         </div>
 
+        {/* ── 2 NEW ADVANCED MODULE CARDS (G2C Concierge & Two-Channel B2B) ──── */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {/* G2C Concierge Banner Card */}
+          <Link
+            href="/concierge"
+            className="p-6 rounded-3xl bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-[#E6DCCF] hover:border-[#9D3E1B] shadow-xs transition group flex flex-col justify-between space-y-3"
+          >
+            <div className="flex items-center justify-between">
+              <div className="p-2.5 rounded-2xl bg-[#9D3E1B] text-white">
+                <Landmark className="w-5 h-5" />
+              </div>
+              <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-300">
+                दिल्ली हाट आवेदन खुला!
+              </span>
+            </div>
+            <div>
+              <h3 className="font-black text-lg text-[#221A16] group-hover:text-[#9D3E1B] transition">
+                G2C सरकारी योजना एवं मेला सेवा (G2C Concierge)
+              </h3>
+              <p className="text-xs text-[#56423C] font-semibold mt-1">
+                दिल्ली हाट, सूरजकुंड मेला और पीएम विश्वकर्मा योजना के ऑडियो अलर्ट्स सुनें और बोलकर आवेदन करें।
+              </p>
+            </div>
+            <span className="text-xs font-bold text-[#9D3E1B] flex items-center gap-1 group-hover:underline">
+              सरकारी मेले व योजनाएं देखें →
+            </span>
+          </Link>
+
+          {/* Two-Channel B2B Linkage Card */}
+          <Link
+            href="/portal"
+            className="p-6 rounded-3xl bg-gradient-to-br from-stone-50 to-amber-50 border-2 border-[#E6DCCF] hover:border-[#904D00] shadow-xs transition group flex flex-col justify-between space-y-3"
+          >
+            <div className="flex items-center justify-between">
+              <div className="p-2.5 rounded-2xl bg-[#904D00] text-white">
+                <Building2 className="w-5 h-5" />
+              </div>
+              <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
+                सामूहिक क्षमता सक्रिय
+              </span>
+            </div>
+            <div>
+              <h3 className="font-black text-lg text-[#221A16] group-hover:text-[#904D00] transition">
+                दोहरा B2B बाज़ार चैनल (Two-Channel B2B Linkage)
+              </h3>
+              <p className="text-xs text-[#56423C] font-semibold mt-1">
+                विरासत 1-of-1 मास्टरपीस एवं क्लस्टर सामूहिक उत्पादन कोटा आवंटन।
+              </p>
+            </div>
+            <span className="text-xs font-bold text-[#904D00] flex items-center gap-1 group-hover:underline">
+              B2B चैनल व क्लस्टर कोटा देखें →
+            </span>
+          </Link>
+        </div>
+
+        {/* ── AI VIRTUAL BUSINESS MANAGER HUB (VOICE-FIRST) ────────────────── */}
+        <VirtualBusinessManager locale={locale} />
+
         {/* Listed Products Table / Grid */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -179,6 +239,8 @@ export default function ArtisanStudioDashboard() {
           </div>
         </div>
       </main>
+
+      <OfflineSyncBadge />
     </div>
   );
 }

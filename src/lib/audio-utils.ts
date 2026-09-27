@@ -151,7 +151,7 @@ export function playTanpuraChime(duration = 2.5): void {
 /**
  * Plays a quick UI feedback beep/tone
  */
-export function playUiBeep(type: 'start' | 'stop' | 'success' = 'start'): void {
+export function playUiBeep(type: 'start' | 'stop' | 'success' | 'ready' = 'start'): void {
   try {
     unlockMobileAudio();
     const ctx = getAudioContext();
@@ -161,7 +161,7 @@ export function playUiBeep(type: 'start' | 'stop' | 'success' = 'start'): void {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
 
-    if (type === 'start') {
+    if (type === 'start' || type === 'ready') {
       osc.frequency.setValueAtTime(440, now);
       osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
     } else if (type === 'stop') {

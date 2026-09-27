@@ -42,6 +42,10 @@ import { AIBadge } from '@/components/AIBadge';
 import { GuidedCamera } from '@/components/capture/GuidedCamera';
 import { VideoCapture } from '@/components/capture/VideoCapture';
 import { MobileMediaPicker } from '@/components/mobile/MobileMediaPicker';
+import { ImageEnhancerStudio } from '@/components/studio/ImageEnhancerStudio';
+import { ExplainablePricingCard } from '@/components/pricing/ExplainablePricingCard';
+import { HumanInTheLoopAudioGate } from '@/components/studio/HumanInTheLoopAudioGate';
+import { Wand2 } from 'lucide-react';
 import { speakText, playTanpuraChime, stopAllAudio, playUiBeep } from '@/lib/audio-utils';
 import {
   ALL_INDIC_LANGUAGES,
@@ -206,6 +210,7 @@ export default function ArtisanCapturePage() {
   const [isSpeakingVoicePromptGuide, setIsSpeakingVoicePromptGuide] = useState(false);
   const [isGuidedCameraOpen, setIsGuidedCameraOpen] = useState(false);
   const [isVideoCaptureOpen, setIsVideoCaptureOpen] = useState(false);
+  const [showImageEnhancer, setShowImageEnhancer] = useState(false);
   const [langSearch, setLangSearch] = useState('');
   const [newMaterialInput, setNewMaterialInput] = useState('');
   const [hasProfile, setHasProfile] = useState<boolean | null>(null);
@@ -652,6 +657,37 @@ export default function ArtisanCapturePage() {
                       </div>
                     )}
                   </div>
+                </div>
+              )}
+
+              {/* AI Image Enhancer Studio Button & Preview */}
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowImageEnhancer(!showImageEnhancer)}
+                  className="w-full p-4 rounded-2xl bg-[#FFF1EB] hover:bg-[#FBEBE4] border-2 border-[#FE932C]/40 text-[#9D3E1B] font-black text-xs sm:text-sm flex items-center justify-between shadow-xs transition active:scale-95"
+                >
+                  <div className="flex items-center gap-2">
+                    <Wand2 className="w-5 h-5 text-[#FE932C]" />
+                    <span>✨ AI स्टूडियो बैकग्राउंड एन्हांसर (AI Studio Image Enhancer)</span>
+                  </div>
+                  <span className="text-xs font-bold underline">
+                    {showImageEnhancer ? 'स्टूडियो बंद करें (Close)' : 'स्टूडियो खोलें (Open Enhancer)'}
+                  </span>
+                </button>
+              </div>
+
+              {showImageEnhancer && (
+                <div className="pt-2">
+                  <ImageEnhancerStudio
+                    initialImage={state.photos[0] || 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=800'}
+                    onEnhancedImageSelected={(url) => {
+                      if (!state.photos.includes(url)) {
+                        dispatch({ type: 'ADD_PHOTO', payload: url });
+                      }
+                      setShowImageEnhancer(false);
+                    }}
+                  />
                 </div>
               )}
 
@@ -1133,6 +1169,43 @@ export default function ArtisanCapturePage() {
                 onChange={(paise) => dispatch({ type: 'SET_DRAFT', payload: { price_paise: paise } })}
               />
             </div>
+
+            {/* Explainable Dynamic Glass-Box Pricing Calculator */}
+            <ExplainablePricingCard
+              rawMaterialsPaise={Math.round(state.draft.price_paise * 0.25)}
+              hoursSpent={16}
+              fairLaborRatePerHourPaise={9000}
+              artisanMarginPaise={Math.round(state.draft.price_paise * 0.35)}
+              packagingPaise={20000}
+              craftName={state.draft.title[state.locale] || state.draft.title.hi || 'हस्तशिल्प'}
+              locale={state.locale}
+              onPriceSelected={(newPricePaise) => {
+                dispatch({ type: 'SET_DRAFT', payload: { price_paise: newPricePaise } });
+              }}
+            />
+
+            {/* Human-in-the-Loop Audio Check & Voice Micro-Corrections */}
+            <HumanInTheLoopAudioGate
+              locale={state.locale}
+              initialListing={{
+                title: state.draft.title[state.locale] || state.draft.title.hi || 'पारंपरिक हस्तशिल्प',
+                pricePaise: state.draft.price_paise,
+                craftType: state.draft.craft_technique || 'पारंपरिक शिल्प',
+                materials: state.draft.materials.join(', ') || 'प्राकृतिक सामग्री',
+                story: state.draft.description[state.locale] || state.draft.description.hi || '',
+                stockQty: state.draft.stock_quantity || 1,
+              }}
+              onListingApproved={(verifiedDraft) => {
+                dispatch({
+                  type: 'SET_DRAFT',
+                  payload: {
+                    price_paise: verifiedDraft.pricePaise,
+                    stock_quantity: verifiedDraft.stockQty,
+                    craft_technique: verifiedDraft.craftType,
+                  },
+                });
+              }}
+            />
 
             {/* High-Impact 1-Click Publish CTA */}
             <button
