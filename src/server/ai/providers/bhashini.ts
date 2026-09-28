@@ -21,8 +21,8 @@ export class BhashiniClient {
   private authEndpoint: string;
 
   constructor() {
-    this.userId = process.env.BHASHINI_USER_ID || '53805500ab-3d5b-4319-97d6-b9acf67e321b';
-    this.apiKey = process.env.BHASHINI_INFERENCE_API_KEY || process.env.BHASHINI_API_KEY || 'vXS_0PCBbQQJvI3KZ4yOa8AbAJX9znEYcqyt-lDn42da_8Mcn-NtzQxw_nY2CRA5';
+    this.userId = process.env.BHASHINI_USER_ID || '';
+    this.apiKey = process.env.BHASHINI_INFERENCE_API_KEY || process.env.BHASHINI_API_KEY || '';
     this.pipelineEndpoint = process.env.BHASHINI_PIPELINE_ENDPOINT || 'https://dhruva-api.bhashini.gov.in/services/inference/pipeline';
     this.authEndpoint = process.env.BHASHINI_AUTH_ENDPOINT || 'https://meity-auth.ulca.ai/ulca/apis/v0/model/getModelsPipeline';
   }
