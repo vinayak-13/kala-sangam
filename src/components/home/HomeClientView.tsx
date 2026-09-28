@@ -17,6 +17,7 @@ import { Navbar } from '@/components/Navbar';
 import { ProductCard } from '@/components/ProductCard';
 import { HeroAudioPlayer } from '@/components/home/HeroAudioPlayer';
 import { WelcomeLanguageGateway } from '@/components/onboarding/WelcomeLanguageGateway';
+import { ProposedArchitectureHub } from '@/components/home/ProposedArchitectureHub';
 import { VoiceGuideButton } from '@/components/VoiceGuideButton';
 import { getHomePageI18n, ALL_INDIC_LANGUAGES } from '@/lib/i18n/indic-languages';
 
@@ -184,6 +185,9 @@ export function HomeClientView({ products }: HomeClientViewProps) {
             </div>
           </div>
         </section>
+
+        {/* ── 2.5 INTERACTIVE PROPOSED ARCHITECTURE & SOLUTION HUB ─────────── */}
+        <ProposedArchitectureHub locale={activeLocale} />
 
         {/* ── 3. MASTERPIECES SHOWCASE (GI & ODOP CRAFTS) ─────────────────── */}
         <section id="masterpieces" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
